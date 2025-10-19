@@ -11,33 +11,43 @@ public class EnemyController : MonoBehaviour
         public Vector3 Position;
         public Vector3 Velocity;
     }
-    private List<States> _states = new List<States>();
-    private Vector3 _currentPosition;
-    private Vector3 _lastServerPosition;
-    private bool _needsSmoothCorrection;
-    private double _lastUpdateTime;
+    [Header("Interpolation/Extrapolation")]
+    [SerializeField] private float _interpolationDelay = 0.15f;   // 100–200 мс буфера
+    [SerializeField] private float _extrapolationLimit = 0.35f;   // 250–500 мс предел экстраполяции
+    [SerializeField] private int _maxSnapshots = 20;
 
-    [SerializeField] private double _timeoutDuration = 0.001; // время, после которого считаем данные устаревшими
-    
+    [Header("Visual correction")]
+    [SerializeField] private float _maxCorrectionSpeed = 10f;     // м/с ограничение визуального догона
+    [SerializeField] private float _snapDistance = 0.35f;         // мгновенный снап при большой ошибке
+    [SerializeField] private float _velocityDamping = 4f;         // затухание скорости при таймауте
+
+    [Header("Timeouts")]
+    [SerializeField] private double _staleTimeout = 0.3;          // когда считаем поток устаревшим
+
+
+    private readonly List<States> _states = new List<States>(32);
+
+    private Vector3 _visualPosition;          // то, что реально отображаем
+    private double _lastPacketLocalTime; // локальное время прихода последнего пакета
+    private Vector3 _lastServerPosition;
+
+    private double _now => Time.realtimeSinceStartupAsDouble;
 
     private void Start()
     {
-        _currentPosition = transform.position;
-        _lastServerPosition = _currentPosition;
-        _lastUpdateTime = Time.realtimeSinceStartupAsDouble;
+        _visualPosition = transform.position;
+        _lastServerPosition = _visualPosition;
+        _lastPacketLocalTime = _now;
     }
 
     internal void OnChange(List<DataChange> changes)
     {
         Vector3 serverPosition = GetServerPosition(changes);
         _lastServerPosition = serverPosition;
-        _lastUpdateTime = Time.realtimeSinceStartupAsDouble;
+        _lastPacketLocalTime = _now;
 
 
-        SaveState(serverPosition, _lastUpdateTime);
-        RecalculateVelocities();
-
-        _needsSmoothCorrection = true;
+        PushSnapshot(serverPosition, _lastPacketLocalTime);
 
         //Логика в уроке
         //Vector3 position = transform.position;
@@ -76,108 +86,113 @@ public class EnemyController : MonoBehaviour
         return position;
     }
 
-    private void SaveState(Vector3 position, double time)
+    private void PushSnapshot(Vector3 position, double time)
     {
-        _states.Add(new States
+        // Вычисляем скорость от предыдущего валидного снапшота
+        Vector3 velocity = Vector3.zero;
+        int n = _states.Count;
+        if (n > 0)
         {
-            Time = time,
-            Position = position,
-            Velocity = Vector3.zero
-        });
-
-        // Ограничиваем размер буфера
-        if (_states.Count > 2)
-            _states.RemoveAt(0);
-        ;
-    }
-    private void RecalculateVelocities()
-    {
-        if (_states.Count < 2) return;
-
-        States prevState = _states[0];
-        States currentState = _states[1];
-
-        double deltaTime = currentState.Time - prevState.Time;
-
-        if (deltaTime > 0.001f)
-        {
-            currentState.Velocity = (currentState.Position - prevState.Position) / (float)deltaTime;
-            _states[1] = currentState;
+            var prev = _states[n - 1];
+            double delta = time - prev.Time;
+            if (delta > 0.0005)
+                velocity = (position - prev.Position) / (float)delta;
+            else
+                velocity = prev.Velocity; // слишком малая delta — сохраняем предыдущую скорость
         }
+
+        _states.Add(new States { Time = time, Position = position, Velocity = velocity });
+
+        // Усечение
+        while (_states.Count > _maxSnapshots)
+            _states.RemoveAt(0);        
     }
+    private bool TryGetInterpolatedTarget(double playbackTime, out Vector3 target)
+    {
+        target = default;
+        int count = _states.Count;
+        if (count == 0) return false;
+
+        // Если playback раньше самого старого — берём старейший
+        if (playbackTime <= _states[0].Time)
+        {
+            target = _states[0].Position;
+            return true;
+        }
+
+        // Ищем два соседних снапшота для интерполяции
+        for (int i = 0; i < count - 1; i++)
+        {
+            var a = _states[i];
+            var b = _states[i + 1];
+            if (playbackTime >= a.Time && playbackTime <= b.Time)
+            {
+                double span = b.Time - a.Time;
+                float t = span > 0.0005 ? (float)((playbackTime - a.Time) / span) : 1f;
+                target = Vector3.Lerp(a.Position, b.Position, Mathf.Clamp01(t));
+                return true;
+            }
+        }
+
+        // Если playback позже последнего — потребуется экстраполяция
+        return false;
+    }
+
+    private Vector3 GetExtrapolatedTarget(double playbackTime)
+    {
+        // Экстраполируем от последнего снапшота с ограничением
+        var last = _states[_states.Count - 1];
+        double delta = Mathf.Min((float)(playbackTime - last.Time), _extrapolationLimit);
+        if (delta <= 0.0)
+            return last.Position;
+
+        // Затухание скорости при длительном отсутствии апдейтов
+        float damp = Mathf.Exp(-_velocityDamping * (float)(playbackTime - last.Time));
+        Vector3 v = last.Velocity * damp;
+        return last.Position + v * (float)delta;
+    }
+    
     private void FixedUpdate()
     {
-        double currentTime = Time.realtimeSinceStartupAsDouble;
-        double timeSinceLastUpdate = currentTime - _lastUpdateTime;
-        // Проверяем, не устарели ли данные от сервера
-        if (timeSinceLastUpdate > _timeoutDuration)
+        if (_states.Count == 0)
         {
-            // Данные устарели - останавливаем объект
-            if (_states.Count > 0)
-            {
-                // Используем последнюю известную позицию от сервера
-                States latestState = _states[_states.Count - 1];
-                float correctionSpeed = CalculateCorrectionSpeed();
-                _currentPosition = Vector3.Lerp(
-                    _currentPosition,
-                    latestState.Position,
-                    correctionSpeed * Time.deltaTime
-                    );
-
-                // Останавливаем движение (обнуляем скорость во всех состояниях)
-                for (int i = 0; i < _states.Count; i++)
-                {
-                    States state = _states[i];
-                    state.Velocity = Vector3.zero;
-                    _states[i] = state;
-                }
-            }
+            // Нет данных — остаёмся где были
+            transform.position = _visualPosition;
+            return;
         }
 
-        else if (_states.Count > 0)
-        {
-            States latestState = _states[_states.Count - 1];
+        // Рендерим “позади” на interpolationDelay
+        double playbackTime = _now - _interpolationDelay;
 
-            if (_states.Count == 1)
-            {
-                // Если есть только одно состояние - просто применяем позицию
-                _currentPosition = latestState.Position;
-            }
-            else
-            {
-                // Экстраполируем позицию на основе скорости                
-                _currentPosition = latestState.Position + latestState.Velocity * (float)timeSinceLastUpdate;
-            }
+        Vector3 logicalTarget;
+        bool hasInterp = TryGetInterpolatedTarget(playbackTime, out logicalTarget);
+        if (!hasInterp)
+        {
+            // Переходим к экстраполяции с ограничением
+            logicalTarget = GetExtrapolatedTarget(playbackTime);
         }
 
-        // Плавная коррекция позиции при получении новых данных
-        if (_needsSmoothCorrection)
-        {
-            float correctionSpeed = CalculateCorrectionSpeed();
-            transform.position = Vector3.Lerp(
-                transform.position,
-                _currentPosition,
-                correctionSpeed * Time.deltaTime
-            );
+        // Определяем, не устарели ли данные
+        bool stale = (_now - _lastPacketLocalTime) > _staleTimeout;
 
-            // Отключаем коррекцию когда близко к целевой позиции
-            if (Vector3.Distance(transform.position, _currentPosition) < 0.1f)
-            {
-                _needsSmoothCorrection = false;
-            }
+        // Визуальное движение: ограниченная скорость + снап порог
+        Vector3 toTarget = logicalTarget - _visualPosition;
+        float dist = toTarget.magnitude;
+
+        if (dist > _snapDistance)
+        {
+            // Слишком большая ошибка — единичный снап
+            _visualPosition = logicalTarget;
         }
         else
         {
-            // Обычное движение с экстраполяцией
-            transform.position = _currentPosition;
+            // Догоняем с ограниченной скоростью; при stale уменьшим скорость слегка
+            float corrSpeed = stale ? Mathf.Max(2f, _maxCorrectionSpeed * 0.6f) : _maxCorrectionSpeed;
+            Vector3 step = Vector3.ClampMagnitude(toTarget, corrSpeed * Time.fixedDeltaTime);
+            _visualPosition += step;
         }
-    }
-    private float CalculateCorrectionSpeed()
-    {
-        if (_states.Count < 2) return 5f;
 
-        // Рассчитываем скорость коррекции на основе реальной скорости объекта
-        float currentSpeed = _states[1].Velocity.magnitude;
-        return Mathf.Clamp(currentSpeed * 2f, 2f, 10f);
+        transform.position = _visualPosition;
     }
 }
+ 
