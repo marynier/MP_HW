@@ -7,17 +7,16 @@ public class EnemyCharacter : Character
     private float _velocityMagnitude = 0;
 
     //плавный поворот
-    [SerializeField] private float _yawSpeed = 360f;     // body Y
-    [SerializeField] private float _pitchSpeed = 360f;   // head X
-    private float _targetYaw;   // Y (body)
-    private float _targetPitch; // X (head)
+    [SerializeField] private float _rotationSpeed = 360f;
+    private float _targetYrotation;
+    private float _targetXrotation;
 
     private void Start()
     {
         targetPosition = transform.position;
 
-        _targetYaw = transform.localEulerAngles.y;
-        _targetPitch = _head.localEulerAngles.x;
+        _targetYrotation = transform.localEulerAngles.y;
+        _targetXrotation = _head.localEulerAngles.x;
     }
     private void Update()
     {
@@ -31,30 +30,27 @@ public class EnemyCharacter : Character
             transform.position = targetPosition;
         }
 
-        // rotation smoothing
-        float yawStep = _yawSpeed * Time.deltaTime;
-        float pitchStep = _pitchSpeed * Time.deltaTime;
+        //расчет поворота
+        float rotationStep = _rotationSpeed * Time.deltaTime;
+        float currentX = _head.localEulerAngles.x;
+        float currentY = transform.localEulerAngles.y;
 
-        float currentYaw = transform.localEulerAngles.y;
-        float currentPitch = _head.localEulerAngles.x;
+        float newX = Mathf.MoveTowardsAngle(currentX, _targetXrotation, rotationStep);
+        float newY = Mathf.MoveTowardsAngle(currentY, _targetYrotation, rotationStep);
 
-        float newYaw = Mathf.MoveTowardsAngle(currentYaw, _targetYaw, yawStep);
-        float newPitch = Mathf.MoveTowardsAngle(currentPitch, _targetPitch, pitchStep);
-
-        // apply without touching roll or лишние оси
-        var body = transform.localEulerAngles;
-        body.y = newYaw;
-        transform.localEulerAngles = body;
-
+        //применение поворота
         var head = _head.localEulerAngles;
-        head.x = newPitch;
+        head.x = newX;
         _head.localEulerAngles = head;
 
+        var body = transform.localEulerAngles;
+        body.y = newY;
+        transform.localEulerAngles = body;
     }
     public void SetSpeed(float value) => speed = value;
     public void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval)
-    {        
-        targetPosition = position + (velocity * averageInterval);       
+    {
+        targetPosition = position + (velocity * averageInterval);
         _velocityMagnitude = velocity.magnitude;
 
         this.velocity = velocity;
@@ -63,13 +59,13 @@ public class EnemyCharacter : Character
     public void SetRotateX(float value)
     {
         //_head.localEulerAngles = new Vector3(value, 0, 0);
-        _targetPitch = value;
+        _targetXrotation = value;
 
     }
     public void SetRotateY(float value)
     {
         //transform.localEulerAngles = new Vector3(0, value, 0);
-        _targetYaw = value;
+        _targetYrotation = value;
     }
 
 }
