@@ -14,7 +14,7 @@ public class Controller : MonoBehaviour
     void Update()
     {
         float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw ("Vertical");
+        float v = Input.GetAxisRaw("Vertical");
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
@@ -23,16 +23,15 @@ public class Controller : MonoBehaviour
 
         bool space = Input.GetKeyDown(KeyCode.Space);
 
-        bool squat = Input.GetKey(KeyCode.LeftControl);
+        bool squat = Input.GetKeyDown(KeyCode.LeftControl);
 
         bool stand = Input.GetKeyUp(KeyCode.LeftControl);
 
         _player.SetInput(h, v, mouseX * _mouseSensitivity);
         _player.RotateX(-mouseY * _mouseSensitivity);
 
-        if (space) _player.Jump();       
-       
         if (squat) _player.Squat();
+        if (space) _player.Jump();
         if (stand) _player.Stand();
 
         if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
@@ -58,7 +57,7 @@ public class Controller : MonoBehaviour
             { "vZ", velocity.z },
             { "sY", scaleY },
             { "rX", rotateX },
-            { "rY", rotateY }           
+            { "rY", rotateY }
         };
         MultiplayerManager.Instance.SendMessage("move", data);
     }

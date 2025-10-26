@@ -16,6 +16,7 @@ public class PlayerCharacter : Character
     private float _rotateY;
     private float _currentRotateX;
     private float _jumpTime;
+    private bool _isInSquat = false;
     private void Start()
     {
         Transform camera = Camera.main.transform;
@@ -65,17 +66,22 @@ public class PlayerCharacter : Character
     {
         if (_checkFly.IsFly) return;
         if (Time.time - _jumpTime < _jumpDelay) return;
-
+        if (_isInSquat) Stand(true);
         _jumpTime = Time.time;
         _rigidbody.AddForce(0, _jumpForce, 0, ForceMode.VelocityChange);
+
     }
     public void Squat()
     {
         if (_checkFly.IsFly) return;
+        if (_isInSquat) return;
         transform.localScale = new Vector3(1, 0.75f, 1);
+        _isInSquat = true;
     }
-    public void Stand()
+    public void Stand(bool force = false)
     {
+        if (!force && _checkFly.IsFly) return;
         transform.localScale = Vector3.one;
+        _isInSquat = false;
     }
 }
