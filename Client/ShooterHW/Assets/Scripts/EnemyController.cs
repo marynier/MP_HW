@@ -55,8 +55,7 @@ public class EnemyController : MonoBehaviour
     {
         SaveReceiveTime();
         Vector3 position = _character.targetPosition;
-        Vector3 velocity = _character.velocity;
-        Vector3 scale = _character.transform.localScale;
+        Vector3 velocity = _character.velocity;        
 
         foreach (var dataChange in changes)
         {

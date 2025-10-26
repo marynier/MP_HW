@@ -60,7 +60,7 @@ public class PlayerCharacter : Character
         scaleY = transform.localScale.y;
 
         rotateX = _head.localEulerAngles.x;
-        rotateY = transform.localEulerAngles.y;
+        rotateY = transform.eulerAngles.y;
     }
     public void Jump()
     {

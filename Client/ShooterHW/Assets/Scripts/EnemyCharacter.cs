@@ -26,7 +26,7 @@ public class EnemyCharacter : Character
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, maxDistance);
         }
         else
-        {
+        {            
             transform.position = targetPosition;
         }
 
