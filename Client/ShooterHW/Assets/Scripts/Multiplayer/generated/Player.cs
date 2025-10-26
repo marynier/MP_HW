@@ -30,9 +30,12 @@ public partial class Player : Schema {
 	public float vZ = default(float);
 
 	[Type(7, "number")]
-	public float rX = default(float);
+	public float sY = default(float);
 
 	[Type(8, "number")]
+	public float rX = default(float);
+
+	[Type(9, "number")]
 	public float rY = default(float);
 }
 

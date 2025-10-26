@@ -56,6 +56,7 @@ public class EnemyController : MonoBehaviour
         SaveReceiveTime();
         Vector3 position = _character.targetPosition;
         Vector3 velocity = _character.velocity;
+        Vector3 scale = _character.transform.localScale;
 
         foreach (var dataChange in changes)
         {
@@ -78,6 +79,9 @@ public class EnemyController : MonoBehaviour
                     break;
                 case "vZ":
                     velocity.z = (float)dataChange.Value;
+                    break;
+                case "sY":
+                    _character.SetScale((float)dataChange.Value);
                     break;
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);

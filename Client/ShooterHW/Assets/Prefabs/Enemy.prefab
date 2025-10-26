@@ -53,6 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
   <speed>k__BackingField: 2
   _head: {fileID: 8175982285860734308}
+  _rotationSpeed: 360
 --- !u!114 &5644414334208369574
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -52,10 +52,11 @@ public class PlayerCharacter : Character
         _head.localEulerAngles = new Vector3(_currentRotateX, 0, 0);
     }
 
-    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY)
+    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float scaleY, out float rotateX, out float rotateY)
     {
         position = transform.position;
         velocity = _rigidbody.linearVelocity;
+        scaleY = transform.localScale.y;
 
         rotateX = _head.localEulerAngles.x;
         rotateY = transform.localEulerAngles.y;
@@ -67,5 +68,14 @@ public class PlayerCharacter : Character
 
         _jumpTime = Time.time;
         _rigidbody.AddForce(0, _jumpForce, 0, ForceMode.VelocityChange);
+    }
+    public void Squat()
+    {
+        if (_checkFly.IsFly) return;
+        transform.localScale = new Vector3(1, 0.75f, 1);
+    }
+    public void Stand()
+    {
+        transform.localScale = Vector3.one;
     }
 }
