@@ -7,6 +7,7 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyCharacter _character;
     [SerializeField] private EnemyGun _gun;
+    [SerializeField] private float _clampPing = 1f;
     private List<float> _receiveTimeInterval = new List<float> { 0, 0, 0, 0, 0 };
     private float AverageInterval
     {
@@ -45,6 +46,8 @@ public class EnemyController : MonoBehaviour
     {
         float interval = Time.time - _lastReceiveTime;
         _lastReceiveTime = Time.time;
+
+        if (interval > _clampPing) interval = _clampPing;
 
         _receiveTimeInterval.Add(interval);
         _receiveTimeInterval.RemoveAt(0);
