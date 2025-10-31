@@ -81,8 +81,7 @@ public class EnemyController : MonoBehaviour
                     break;
                 case "vZ":
                     velocity.z = (float)dataChange.Value;
-                    break;
-                
+                    break;                
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);
                     break;
@@ -90,7 +89,8 @@ public class EnemyController : MonoBehaviour
                     _character.SetRotateY((float)dataChange.Value);
                     break;
                  case "crouch":
-                    _character.SetCrouch((float)dataChange.Value);
+                    _character.SetCrouch((bool)dataChange.Value);
+                    Debug.Log((bool)dataChange.Value);
                     break;
                 default:
                     Debug.LogWarning("Не обрабатывается изменение поля " + dataChange.Field);

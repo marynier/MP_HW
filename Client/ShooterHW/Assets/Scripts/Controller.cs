@@ -7,6 +7,7 @@ public class Controller : MonoBehaviour
     [SerializeField] private PlayerGun _gun;
     [SerializeField] private float _mouseSensitivity = 2f;
     private MultiplayerManager _multiplayerManager;
+    private bool _wasCrouched = false;
     private void Start()
     {
         _multiplayerManager = MultiplayerManager.Instance;
@@ -30,14 +31,25 @@ public class Controller : MonoBehaviour
         _player.SetInput(h, v, mouseX * _mouseSensitivity);
         _player.RotateX(-mouseY * _mouseSensitivity);
 
-        if (crouch) _player.Crouch();
+        if (crouch && !_wasCrouched)
+        {
+            _player.Crouch();
+            SendCrouch();
+        }
+        if (!crouch && _wasCrouched)
+        {
+            _player.Stand();
+            SendCrouch();
+        }
+        _wasCrouched = crouch;
+
+        //if (stand) _player.Stand();
         if (space) _player.Jump();
-        if (!crouch) _player.Stand();
 
-        if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
-        if (crouch && _player._isCrouched) SendCrouch(true);
 
-        SendMove();
+        if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);        
+
+            SendMove();
     }
     private void SendShoot(ref ShootInfo shootInfo)
     {
@@ -55,14 +67,20 @@ public class Controller : MonoBehaviour
             { "pZ", position.z },
             { "vX", velocity.x },
             { "vY", velocity.y },
-            { "vZ", velocity.z },            
+            { "vZ", velocity.z },
             { "rX", rotateX },
             { "rY", rotateY }
         };
         MultiplayerManager.Instance.SendMessage("move", data);
     }
-    private void SendCrouch(bool data)
-    {        
+    private void SendCrouch()
+    {
+        _player.GetCrouchInfo(out bool isCrouched);
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            {"crouch", isCrouched }
+        };
+
         MultiplayerManager.Instance.SendMessage("crouch", data);
     }
 }

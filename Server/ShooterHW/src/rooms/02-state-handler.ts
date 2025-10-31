@@ -2,8 +2,8 @@ import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class Player extends Schema {
-    @type("number")
-    scale = 1;   
+    @type("boolean")
+    isCrouched = false;   
 
     @type("number")
     speed = 0;    
@@ -58,13 +58,12 @@ export class State extends Schema {
         player.vY = data.vY;
         player.vZ = data.vZ;        
         player.rX = data.rX;
-        player.rY = data.rY;
-                
+        player.rY = data.rY;                
     }
     crouchPlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
-        player.scale = data; 
-    }
+        player.isCrouched = data.isCrouched;
+    }    
 }
 
 export class StateHandlerRoom extends Room<State> {
@@ -81,10 +80,9 @@ export class StateHandlerRoom extends Room<State> {
             this.state.movePlayer(client.sessionId, data);
         });
 
-        this.onMessage("crouch", (client, data) => {
-            //console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
+        this.onMessage("crouch", (client, data) => {           
             this.state.crouchPlayer(client.sessionId, data);
-            this.broadcast("crouch", data, {except: client})
+            console.log(data);
         });
 
         this.onMessage("shoot", (client, data) => {

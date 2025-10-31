@@ -67,7 +67,7 @@ public class PlayerCharacter : Character
     {
         if (_checkFly.IsFly) return;
         if (Time.time - _jumpTime < _jumpDelay) return;
-        if (_isCrouched) Stand(true);
+        if (_isCrouched) Stand();
         _jumpTime = Time.time;
         _rigidbody.AddForce(0, _jumpForce, 0, ForceMode.VelocityChange);
 
@@ -76,13 +76,19 @@ public class PlayerCharacter : Character
     {
         if (_checkFly.IsFly) return;
         if (_isCrouched) return;
-        transform.localScale = new Vector3(1, _crouchScale, 1);
         _isCrouched = true;
+
+        transform.localScale = new Vector3(1, _crouchScale, 1);
+
     }
-    public void Stand(bool force = false)
+    public void Stand()
     {
-        if (!force && _checkFly.IsFly) return;
+        if (_checkFly.IsFly) return;
         transform.localScale = Vector3.one;
         _isCrouched = false;
+    }
+    public void GetCrouchInfo(out bool isCrouched)
+    {
+        isCrouched = _isCrouched;
     }
 }

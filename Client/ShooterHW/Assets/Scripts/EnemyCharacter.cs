@@ -6,6 +6,7 @@ public class EnemyCharacter : Character
     public Vector3 targetPosition { get; private set; } = Vector3.zero;
     private float _velocityMagnitude = 0;
 
+    private bool _isCrouched = false;
     //плавный поворот
     [SerializeField] private float _rotationSpeed = 360f;
     private float _targetYrotation;
@@ -26,7 +27,7 @@ public class EnemyCharacter : Character
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, maxDistance);
         }
         else
-        {            
+        {
             transform.position = targetPosition;
         }
 
@@ -83,10 +84,17 @@ public class EnemyCharacter : Character
 
         this.velocity = velocity;
     }
-    public void SetCrouch(float value)
+    public void SetCrouch(bool value)
     {
-       Vector3 newScale = new Vector3(1, value, 1);
-       transform.localScale = newScale;
+        if (_isCrouched) return;
+        _isCrouched = value;
+        Vector3 newScale;
+
+        if (_isCrouched) newScale = new Vector3(1, 0.75f, 1);    
+       
+        else newScale = Vector3.one;
+        
+        transform.localScale = newScale;
     }
     public void SetRotateX(float value)
     {

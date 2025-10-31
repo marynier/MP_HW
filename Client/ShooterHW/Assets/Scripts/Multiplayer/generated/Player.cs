@@ -8,8 +8,8 @@
 using Colyseus.Schema;
 
 public partial class Player : Schema {
-	[Type(0, "number")]
-	public float scale = default(float);
+	[Type(0, "boolean")]
+	public bool isCrouched = default(bool);
 
 	[Type(1, "number")]
 	public float speed = default(float);
