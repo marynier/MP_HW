@@ -1,4 +1,4 @@
-using Colyseus.Schema;
+п»їusing Colyseus.Schema;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -82,17 +82,18 @@ public class EnemyController : MonoBehaviour
                 case "vZ":
                     velocity.z = (float)dataChange.Value;
                     break;
-                case "sY":
-                    _character.SetScale((float)dataChange.Value);
-                    break;
+                
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);
                     break;
                 case "rY":
                     _character.SetRotateY((float)dataChange.Value);
-                    break;                
+                    break;
+                 case "crouch":
+                    _character.SetCrouch((float)dataChange.Value);
+                    break;
                 default:
-                    Debug.LogWarning("Не обрабатывается изменение поля " + dataChange.Field);
+                    Debug.LogWarning("РќРµ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ РёР·РјРµРЅРµРЅРёРµ РїРѕР»СЏ " + dataChange.Field);
                     break;
             }
         }

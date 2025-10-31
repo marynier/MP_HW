@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerCharacter : Character
 {
@@ -11,12 +11,15 @@ public class PlayerCharacter : Character
     [SerializeField] private float _jumpForce = 50f;
     [SerializeField] private CheckFly _checkFly;
     [SerializeField] private float _jumpDelay = 0.2f;
+    [field: SerializeField] public float _crouchScale { get; private set; } = 0.75f;
+
     private float _inputH;
     private float _inputV;
     private float _rotateY;
     private float _currentRotateX;
     private float _jumpTime;
-    private bool _isInSquat = false;
+
+    public bool _isCrouched { get; private set; } = false;
     private void Start()
     {
         Transform camera = Camera.main.transform;
@@ -53,12 +56,10 @@ public class PlayerCharacter : Character
         _head.localEulerAngles = new Vector3(_currentRotateX, 0, 0);
     }
 
-    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float scaleY, out float rotateX, out float rotateY)
+    public void GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY)
     {
         position = transform.position;
         velocity = _rigidbody.linearVelocity;
-        scaleY = transform.localScale.y;
-
         rotateX = _head.localEulerAngles.x;
         rotateY = transform.eulerAngles.y;
     }
@@ -66,22 +67,22 @@ public class PlayerCharacter : Character
     {
         if (_checkFly.IsFly) return;
         if (Time.time - _jumpTime < _jumpDelay) return;
-        if (_isInSquat) Stand(true);
+        if (_isCrouched) Stand(true);
         _jumpTime = Time.time;
         _rigidbody.AddForce(0, _jumpForce, 0, ForceMode.VelocityChange);
 
     }
-    public void Squat()
+    public void Crouch()
     {
         if (_checkFly.IsFly) return;
-        if (_isInSquat) return;
-        transform.localScale = new Vector3(1, 0.75f, 1);
-        _isInSquat = true;
+        if (_isCrouched) return;
+        transform.localScale = new Vector3(1, _crouchScale, 1);
+        _isCrouched = true;
     }
     public void Stand(bool force = false)
     {
         if (!force && _checkFly.IsFly) return;
         transform.localScale = Vector3.one;
-        _isInSquat = false;
+        _isCrouched = false;
     }
 }

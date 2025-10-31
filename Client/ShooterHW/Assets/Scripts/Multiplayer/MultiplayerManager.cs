@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using Colyseus;
 using UnityEngine;
 
@@ -26,13 +26,18 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         _room.OnStateChange += OnChange;
 
         _room.OnMessage<string>("Shoot", ApplyShoot);
+        _room.OnMessage<string>("crouch", Crouch);
+    }
+    private void Crouch()
+    {
+
     }
     private void ApplyShoot(string jsonShootInfo)
     {
         ShootInfo shootInfo = JsonUtility.FromJson<ShootInfo>(jsonShootInfo);
         if(_enemies.ContainsKey(shootInfo.key) == false)
         {
-            Debug.LogError("Enemy нет, а он пытался стрелять");
+            Debug.LogError("Enemy РЅРµС‚, Р° РѕРЅ РїС‹С‚Р°Р»СЃСЏ СЃС‚СЂРµР»СЏС‚СЊ");
             return;
         }
         _enemies[shootInfo.key].Shoot(shootInfo);
@@ -83,5 +88,6 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     {
         _room.Send(key, data);
     }
+    
     public string GetSessionID() => _room.SessionId;
 }

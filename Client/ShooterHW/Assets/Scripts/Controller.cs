@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Controller : MonoBehaviour
@@ -23,18 +23,19 @@ public class Controller : MonoBehaviour
 
         bool space = Input.GetKeyDown(KeyCode.Space);
 
-        bool squat = Input.GetKeyDown(KeyCode.LeftControl);
+        bool crouch = Input.GetKey(KeyCode.LeftControl);
 
-        bool stand = Input.GetKeyUp(KeyCode.LeftControl);
+        //bool stand = Input.GetKeyUp(KeyCode.LeftControl);
 
         _player.SetInput(h, v, mouseX * _mouseSensitivity);
         _player.RotateX(-mouseY * _mouseSensitivity);
 
-        if (squat) _player.Squat();
+        if (crouch) _player.Crouch();
         if (space) _player.Jump();
-        if (stand) _player.Stand();
+        if (!crouch) _player.Stand();
 
         if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
+        if (crouch && _player._isCrouched) SendCrouch(true);
 
         SendMove();
     }
@@ -46,7 +47,7 @@ public class Controller : MonoBehaviour
     }
     private void SendMove()
     {
-        _player.GetMoveInfo(out Vector3 position, out Vector3 velocity, out float scaleY, out float rotateX, out float rotateY);
+        _player.GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY);
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
             { "pX", position.x },
@@ -54,12 +55,15 @@ public class Controller : MonoBehaviour
             { "pZ", position.z },
             { "vX", velocity.x },
             { "vY", velocity.y },
-            { "vZ", velocity.z },
-            { "sY", scaleY },
+            { "vZ", velocity.z },            
             { "rX", rotateX },
             { "rY", rotateY }
         };
         MultiplayerManager.Instance.SendMessage("move", data);
+    }
+    private void SendCrouch(bool data)
+    {        
+        MultiplayerManager.Instance.SendMessage("crouch", data);
     }
 }
 [System.Serializable]

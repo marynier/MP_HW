@@ -83,7 +83,7 @@ public class EnemyCharacter : Character
 
         this.velocity = velocity;
     }
-    public void SetScale(float value)
+    public void SetCrouch(float value)
     {
        Vector3 newScale = new Vector3(1, value, 1);
        transform.localScale = newScale;

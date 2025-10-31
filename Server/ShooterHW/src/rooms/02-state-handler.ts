@@ -3,6 +3,9 @@ import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class Player extends Schema {
     @type("number")
+    scale = 1;   
+
+    @type("number")
     speed = 0;    
 
     @type("number")
@@ -21,10 +24,7 @@ export class Player extends Schema {
     vY = 0;
 
     @type("number")
-    vZ = 0;
-
-    @type("number")
-    sY = 1;
+    vZ = 0;    
 
     @type("number")
     rX = 0;
@@ -56,10 +56,14 @@ export class State extends Schema {
         player.pZ = data.pZ;
         player.vX = data.vX;
         player.vY = data.vY;
-        player.vZ = data.vZ;
-        player.sY = data.sY;
+        player.vZ = data.vZ;        
         player.rX = data.rX;
-        player.rY = data.rY;        
+        player.rY = data.rY;
+                
+    }
+    crouchPlayer (sessionId: string, data: any) {
+        const player = this.players.get(sessionId);
+        player.scale = data; 
     }
 }
 
@@ -75,6 +79,12 @@ export class StateHandlerRoom extends Room<State> {
         this.onMessage("move", (client, data) => {
             //console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
             this.state.movePlayer(client.sessionId, data);
+        });
+
+        this.onMessage("crouch", (client, data) => {
+            //console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
+            this.state.crouchPlayer(client.sessionId, data);
+            this.broadcast("crouch", data, {except: client})
         });
 
         this.onMessage("shoot", (client, data) => {
