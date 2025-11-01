@@ -13,4 +13,3 @@ public class LookAtCamera : MonoBehaviour
         transform.LookAt(_camera);
     }
 }
-

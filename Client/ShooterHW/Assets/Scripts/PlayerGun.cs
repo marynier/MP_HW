@@ -7,6 +7,7 @@ public class PlayerGun : Gun
     [SerializeField] private float _bulletSpeed;
     [SerializeField] private float _shootDelay;
     private float _lastShootTime;
+
     public bool TryShoot(out ShootInfo info)
     {
         info = new ShootInfo();

@@ -17,6 +17,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         Instance.InitializeClient();
         Connect();
     }
+
     private async void Connect()
     {
         Dictionary<string, object> data = new Dictionary<string, object>()
@@ -30,16 +31,18 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         _room.OnMessage<string>("Shoot", ApplyShoot);
     }
+
     private void ApplyShoot(string jsonShootInfo)
     {
         ShootInfo shootInfo = JsonUtility.FromJson<ShootInfo>(jsonShootInfo);
-        if(_enemies.ContainsKey(shootInfo.key) == false)
+        if (_enemies.ContainsKey(shootInfo.key) == false)
         {
             Debug.LogError("Enemy нет, а он пытался стрелять");
             return;
         }
         _enemies[shootInfo.key].Shoot(shootInfo);
     }
+
     private void OnChange(State state, bool isFirstState)
     {
         if (isFirstState == false) return;
@@ -53,6 +56,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         _room.State.players.OnAdd += CreateEnemy;
         _room.State.players.OnRemove += RemoveEnemy;
     }
+
     private void CreatePlayer(Player player)
     {
         var position = new Vector3(player.pX, player.pY, player.pZ);
@@ -60,6 +64,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         player.OnChange += playerCharacter.OnChange;
         _room.OnMessage<string>("Restart", playerCharacter.GetComponent<Controller>().Restart);
     }
+
     private void CreateEnemy(string key, Player player)
     {
         var position = new Vector3(player.pX, player.pY, player.pZ);
@@ -68,6 +73,7 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
         _enemies.Add(key, enemy);
     }
+
     private void RemoveEnemy(string key, Player value)
     {
         if (_enemies.ContainsKey(key) == false) return;
@@ -76,19 +82,21 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
         enemy.Destroy();
         _enemies.Remove(key);
     }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();
         _room.Leave();
     }
-    public void SendMessage (string key, Dictionary<string, object> data)
+
+    public void SendMessage(string key, Dictionary<string, object> data)
     {
         _room.Send(key, data);
     }
+
     public void SendMessage(string key, string data)
     {
         _room.Send(key, data);
     }
-    
     public string GetSessionID() => _room.SessionId;
 }

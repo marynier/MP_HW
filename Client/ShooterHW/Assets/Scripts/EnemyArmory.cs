@@ -6,10 +6,12 @@ public class EnemyArmory : MonoBehaviour
     [SerializeField] private EnemyController _controller;
     [SerializeField] private GunAnimation _gunAnimation;
     private EnemyGun _currentGun;
+
     private void Awake()
     {
         SwitchGun(1);
     }
+
     public void SwitchGun(int armoryIndex)
     {
         if (_currentGun != null) _currentGun.gameObject.SetActive(false);        

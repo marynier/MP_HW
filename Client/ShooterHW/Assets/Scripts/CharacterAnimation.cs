@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CharacterAnimation : MonoBehaviour
 {
@@ -18,5 +18,4 @@ public class CharacterAnimation : MonoBehaviour
         _animator.SetFloat(Speed, speed *  sign);
         _animator.SetBool(Grounded, _checkFly.IsFly == false);
     }
-
 }

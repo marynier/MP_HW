@@ -7,15 +7,17 @@ public class Controller : MonoBehaviour
 {
     [SerializeField] private float _restartDelay = 3f;
     [SerializeField] private PlayerCharacter _player;
-    private PlayerGun _gun;
     [SerializeField] private float _mouseSensitivity = 2f;
     private MultiplayerManager _multiplayerManager;
+    private PlayerGun _gun;
     private bool _wasCrouched = false;
     private bool _hold = false;
+
     private void Start()
     {
         _multiplayerManager = MultiplayerManager.Instance;
     }
+
     void Update()
     {
         if (_hold) return;
@@ -30,8 +32,6 @@ public class Controller : MonoBehaviour
         bool space = Input.GetKeyDown(KeyCode.Space);
 
         bool crouch = Input.GetKey(KeyCode.LeftControl);
-
-        //bool stand = Input.GetKeyUp(KeyCode.LeftControl);
 
         _player.SetInput(h, v, mouseX * _mouseSensitivity);
         _player.RotateX(-mouseY * _mouseSensitivity);
@@ -48,20 +48,20 @@ public class Controller : MonoBehaviour
         }
         _wasCrouched = crouch;
 
-        //if (stand) _player.Stand();
         if (space) _player.Jump();
 
+        if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
 
-        if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);        
-
-            SendMove();
+        SendMove();
     }
+
     private void SendShoot(ref ShootInfo shootInfo)
     {
         shootInfo.key = _multiplayerManager.GetSessionID();
         string json = JsonUtility.ToJson(shootInfo);
         _multiplayerManager.SendMessage("shoot", json);
     }
+
     private void SendMove()
     {
         _player.GetMoveInfo(out Vector3 position, out Vector3 velocity, out float rotateX, out float rotateY);
@@ -78,6 +78,7 @@ public class Controller : MonoBehaviour
         };
         MultiplayerManager.Instance.SendMessage("move", data);
     }
+
     private void SendCrouch()
     {
         _player.GetCrouchInfo(out bool crouch);
@@ -88,6 +89,7 @@ public class Controller : MonoBehaviour
 
         MultiplayerManager.Instance.SendMessage("crouch", data);
     }
+
     public void Restart(string jsonRestartInfo)
     {
         RestartInfo info = JsonUtility.FromJson<RestartInfo>(jsonRestartInfo);
@@ -110,17 +112,20 @@ public class Controller : MonoBehaviour
 
         _multiplayerManager.SendMessage("move", data);
     }
+
     private IEnumerator Hold()
     {
         _hold = true;
         yield return new WaitForSecondsRealtime(_restartDelay);
         _hold = false;
     }
+
     public void SetGun(PlayerGun gun)
     {
         _gun = gun;
     }
 }
+
 [System.Serializable]
 public struct ShootInfo
 {
@@ -132,6 +137,7 @@ public struct ShootInfo
     public float dY;
     public float dZ;
 }
+
 [Serializable]
 public struct RestartInfo
 {

@@ -12,15 +12,18 @@ public class Bullet : MonoBehaviour
         _rigidbody.linearVelocity = velocity;
         StartCoroutine(DelayDestroy());
     }
+
     private IEnumerator DelayDestroy()
     {
         yield return new WaitForSecondsRealtime(_lifeTime);
         Destroy();
     }
+
     private void Destroy()
     {
         Destroy(gameObject);
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.TryGetComponent(out EnemyCharacter enemy))

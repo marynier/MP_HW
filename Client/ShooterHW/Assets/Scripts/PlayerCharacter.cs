@@ -43,6 +43,7 @@ public class PlayerCharacter : Character
         Move();
         RotateY();
     }
+
     private void Move()
     {
         Vector3 velocity = (transform.forward * _inputV + transform.right * _inputH).normalized * speed;
@@ -50,11 +51,13 @@ public class PlayerCharacter : Character
         base.velocity = velocity;
         _rigidbody.linearVelocity = base.velocity;
     }
+
     private void RotateY()
     {
         _rigidbody.angularVelocity = new Vector3(0, _rotateY, 0);
         _rotateY = 0;
     }
+
     public void RotateX(float value)
     {
         _currentRotateX = Mathf.Clamp(_currentRotateX + value, _minHeadAngle, _maxHeadAngle);
@@ -68,6 +71,7 @@ public class PlayerCharacter : Character
         rotateX = _head.localEulerAngles.x;
         rotateY = transform.eulerAngles.y;
     }
+
     public void Jump()
     {
         if (_checkFly.IsFly) return;
@@ -75,27 +79,29 @@ public class PlayerCharacter : Character
         if (_isCrouched) Stand();
         _jumpTime = Time.time;
         _rigidbody.AddForce(0, _jumpForce, 0, ForceMode.VelocityChange);
-
     }
+
     public void Crouch()
     {
-        if (_checkFly.IsFly) return;
+        //if (_checkFly.IsFly) return;
         if (_isCrouched) return;
         _isCrouched = true;
 
         transform.localScale = new Vector3(1, _crouchScale, 1);
-
     }
+
     public void Stand()
     {
-        if (_checkFly.IsFly) return;
+        //if (_checkFly.IsFly) return;
         transform.localScale = Vector3.one;
         _isCrouched = false;
     }
+
     public void GetCrouchInfo(out bool isCrouched)
     {
         isCrouched = _isCrouched;
     }
+
     internal void OnChange(List<DataChange> changes)
     {
         foreach (var dataChange in changes)

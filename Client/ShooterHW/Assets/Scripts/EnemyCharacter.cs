@@ -11,14 +11,17 @@ public class EnemyCharacter : Character
     private float _velocityMagnitude = 0;
 
     private bool _isCrouched = false;
+
     //плавный поворот
     [SerializeField] private float _rotationSpeed = 360f;
     private float _targetYrotation;
     private float _targetXrotation;
+
     public void Init(string sessionID)
     {
         _sessionID = sessionID;
     }
+
     private void Start()
     {
         targetPosition = transform.position;
@@ -26,6 +29,7 @@ public class EnemyCharacter : Character
         _targetYrotation = transform.localEulerAngles.y;
         _targetXrotation = _head.localEulerAngles.x;
     }
+
     private void Update()
     {
         if (_velocityMagnitude > 0.1f)
@@ -43,9 +47,6 @@ public class EnemyCharacter : Character
         float currentX = _head.localEulerAngles.x;
         float currentY = transform.localEulerAngles.y;
 
-        //float newX = Mathf.MoveTowardsAngle(currentX, _targetXrotation, rotationStep);
-        //float newY = Mathf.MoveTowardsAngle(currentY, _targetYrotation, rotationStep);
-
         float newX = Mathf.LerpAngle(currentX, _targetXrotation, rotationStep);
         float newY = Mathf.LerpAngle(currentY, _targetYrotation, rotationStep);
 
@@ -58,40 +59,42 @@ public class EnemyCharacter : Character
         body.y = newY;
         transform.localEulerAngles = body;
     }
+
     public void SetSpeed(float value) => speed = value;
+
     public void SetMaxHP(int value)
     {
         maxHealth = value;
         _health.SetMax(value);
         _health.SetCurrent(value);
     }
+
     public void RestoreHP(int newValue)
     {
         _health.SetCurrent(newValue);
     }
+
     public void SetMovement(in Vector3 position, in Vector3 velocity, in float averageInterval)
     {
         Vector3 desiredPosition = position + (velocity * averageInterval);
 
-        //проверка пола (Raycast вниз от desiredPosition)
+        //проверка пола
         RaycastHit hit;
-        float rayDistance = 1.0f; //расстояние для проверки пола
+        float rayDistance = 1.0f;
         Vector3 rayOrigin = new Vector3(desiredPosition.x, desiredPosition.y + rayDistance, desiredPosition.z);
         if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayDistance * 2))
-        {
-            //если луч попал в пол, корректируем позицию по Y
+        {            
             desiredPosition.y = Mathf.Max(desiredPosition.y, hit.point.y);
         }
 
-        //проверка стен (Raycast от текущей позиции к desiredPosition)
+        //проверка стен
         Vector3 direction = desiredPosition - transform.position;
         float distance = direction.magnitude;
         direction.Normalize();
 
         if (Physics.Raycast(transform.position, direction, out hit, distance))
-        {
-            //если луч попал в стену, ставим targetPosition близко к стене
-            desiredPosition = hit.point - direction * 0.1f; //отступ немного назад от стены
+        {            
+            desiredPosition = hit.point - direction * 0.1f;
         }
 
         targetPosition = desiredPosition;
@@ -134,5 +137,4 @@ public class EnemyCharacter : Character
         //transform.localEulerAngles = new Vector3(0, value, 0); //было в уроке
         _targetYrotation = value;
     }
-
 }

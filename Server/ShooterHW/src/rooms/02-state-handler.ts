@@ -105,8 +105,7 @@ export class StateHandlerRoom extends Room<State> {
         });
 
         this.onMessage("gunChange", (client, data) => {           
-            this.state.changeGun(client.sessionId, data);
-            console.log(data);            
+            this.state.changeGun(client.sessionId, data);                        
         });
 
         this.onMessage("shoot", (client, data) => {

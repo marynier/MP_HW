@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CheckFly : MonoBehaviour
 {
@@ -21,6 +21,7 @@ public class CheckFly : MonoBehaviour
             if (_flyTimer > _coyoteTime) IsFly = true;
         }
     }
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

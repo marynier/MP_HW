@@ -8,9 +8,10 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyCharacter _character;
     [SerializeField] private EnemyArmory _armory;
-    private EnemyGun _gun;
     [SerializeField] private float _clampPing = 1f;
     private List<float> _receiveTimeInterval = new List<float> { 0, 0, 0, 0, 0 };
+    private EnemyGun _gun;
+
     private float AverageInterval
     {
         get
@@ -35,17 +36,20 @@ public class EnemyController : MonoBehaviour
         _character.SetMaxHP(player.maxHP);
         player.OnChange += OnChange;
     }
+
     public void Shoot(in ShootInfo info)
     {
         Vector3 position = new Vector3(info.pX, info.pY, info.pZ);
         Vector3 velocity = new Vector3(info.dX, info.dY, info.dZ);
         _gun.Shoot(position, velocity);
     }
+
     public void Destroy()
     {
         _player.OnChange -= OnChange;
         Destroy(gameObject);
     }
+
     private void SaveReceiveTime()
     {
         float interval = Time.time - _lastReceiveTime;
@@ -103,11 +107,8 @@ public class EnemyController : MonoBehaviour
                     _character.SetCrouch((bool)dataChange.Value);
                     break;
                 case "g":
-                    Debug.Log(dataChange.Value);
-                    //int index = (int)dataChange.Value;
-                    //Debug.Log($"SwitchGun вызов с параметром: {(int)dataChange.Value}");
                     _armory.SwitchGun(Convert.ToInt32(dataChange.Value));
-                    break;                
+                    break;
                 default:
                     Debug.LogWarning("Не обрабатывается изменение поля " + dataChange.Field);
                     break;
@@ -115,6 +116,7 @@ public class EnemyController : MonoBehaviour
         }
         _character.SetMovement(position, velocity, AverageInterval);
     }
+
     public void SetGun(EnemyGun gun)
     {
         _gun = gun;
