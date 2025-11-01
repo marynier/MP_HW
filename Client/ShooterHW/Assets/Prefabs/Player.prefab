@@ -349,6 +349,7 @@ GameObject:
   - component: {fileID: 7477271186429842861}
   - component: {fileID: 5349870355985260736}
   - component: {fileID: 3881722124279275292}
+  - component: {fileID: 7973695074321222690}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -539,6 +540,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   _ui: {fileID: 5627629745754238641}
+--- !u!114 &7973695074321222690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3709041282269781915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d3e514519baa84ebf56196569b224d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerArmory
+  _armorySettings: {fileID: 11400000, guid: 44443f2009ae5a54fb3566615d3efbd2, type: 2}
+  _parentTransform: {fileID: 9108380248885836432}
 --- !u!1 &5929494553809794397
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +666,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 191802311250448324, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6128295628213254845, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       insertIndex: -1
@@ -729,5 +745,10 @@ Animator:
 --- !u!4 &6975518207932602839 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4597028247493687358, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+  m_PrefabInstance: {fileID: 6847133963607843305}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9108380248885836432 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2405660643607550841, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
   m_PrefabInstance: {fileID: 6847133963607843305}
   m_PrefabAsset: {fileID: 0}
