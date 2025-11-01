@@ -1,4 +1,5 @@
 ﻿using Colyseus.Schema;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,8 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyCharacter _character;
-    [SerializeField] private EnemyGun _gun;
+    [SerializeField] private EnemyArmory _armory;
+    private EnemyGun _gun;
     [SerializeField] private float _clampPing = 1f;
     private List<float> _receiveTimeInterval = new List<float> { 0, 0, 0, 0, 0 };
     private float AverageInterval
@@ -60,7 +62,7 @@ public class EnemyController : MonoBehaviour
     {
         SaveReceiveTime();
         Vector3 position = _character.targetPosition;
-        Vector3 velocity = _character.velocity;        
+        Vector3 velocity = _character.velocity;
 
         foreach (var dataChange in changes)
         {
@@ -90,21 +92,31 @@ public class EnemyController : MonoBehaviour
                     break;
                 case "vZ":
                     velocity.z = (float)dataChange.Value;
-                    break;                
+                    break;
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);
                     break;
                 case "rY":
                     _character.SetRotateY((float)dataChange.Value);
                     break;
-                 case "crouch":
-                    _character.SetCrouch((bool)dataChange.Value);                    
+                case "crouch":
+                    _character.SetCrouch((bool)dataChange.Value);
                     break;
+                case "g":
+                    Debug.Log(dataChange.Value);
+                    //int index = (int)dataChange.Value;
+                    //Debug.Log($"SwitchGun вызов с параметром: {(int)dataChange.Value}");
+                    _armory.SwitchGun(Convert.ToInt32(dataChange.Value));
+                    break;                
                 default:
                     Debug.LogWarning("Не обрабатывается изменение поля " + dataChange.Field);
                     break;
             }
         }
         _character.SetMovement(position, velocity, AverageInterval);
-    }    
+    }
+    public void SetGun(EnemyGun gun)
+    {
+        _gun = gun;
+    }
 }

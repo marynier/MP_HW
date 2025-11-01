@@ -844,6 +844,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1229753603 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1792588572456635753, guid: f078541affe9d994c9a48cb2f43e3277, type: 3}
+  m_PrefabInstance: {fileID: 4934506369057733553}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc7dcb7c7aaba44a87bac23ade8672c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GunAnimation
 --- !u!1 &1857216353
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,6 +935,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3282814124635455529, guid: f078541affe9d994c9a48cb2f43e3277, type: 3}
+      propertyPath: _bulletPrefab
+      value: 
+      objectReference: {fileID: 5030747541302633292, guid: 93cfd4d6839953f4084bc995cb5a5217, type: 3}
     - target: {fileID: 3709041282269781915, guid: f078541affe9d994c9a48cb2f43e3277, type: 3}
       propertyPath: m_Name
       value: Player
@@ -980,6 +995,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7973695074321222690, guid: f078541affe9d994c9a48cb2f43e3277, type: 3}
+      propertyPath: _gunAnimation
+      value: 
+      objectReference: {fileID: 1229753603}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -2,6 +2,9 @@ import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
 export class Player extends Schema {
+    @type("number")
+    g = 1;    
+
     @type("uint8")
     loss = 0;
 
@@ -75,7 +78,12 @@ export class State extends Schema {
     crouchPlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
         player.crouch = data.crouch;
-    }    
+    }
+    
+    changeGun (sessionId: string, data: any) {
+        const player = this.players.get(sessionId);
+        player.g = data.g;     
+    } 
 }
 
 export class StateHandlerRoom extends Room<State> {
@@ -94,6 +102,11 @@ export class StateHandlerRoom extends Room<State> {
 
         this.onMessage("crouch", (client, data) => {           
             this.state.crouchPlayer(client.sessionId, data);            
+        });
+
+        this.onMessage("gunChange", (client, data) => {           
+            this.state.changeGun(client.sessionId, data);
+            console.log(data);            
         });
 
         this.onMessage("shoot", (client, data) => {

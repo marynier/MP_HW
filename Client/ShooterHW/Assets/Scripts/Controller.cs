@@ -7,7 +7,7 @@ public class Controller : MonoBehaviour
 {
     [SerializeField] private float _restartDelay = 3f;
     [SerializeField] private PlayerCharacter _player;
-    [SerializeField] private PlayerGun _gun;
+    private PlayerGun _gun;
     [SerializeField] private float _mouseSensitivity = 2f;
     private MultiplayerManager _multiplayerManager;
     private bool _wasCrouched = false;
@@ -115,6 +115,10 @@ public class Controller : MonoBehaviour
         _hold = true;
         yield return new WaitForSecondsRealtime(_restartDelay);
         _hold = false;
+    }
+    public void SetGun(PlayerGun gun)
+    {
+        _gun = gun;
     }
 }
 [System.Serializable]
