@@ -106,7 +106,7 @@ public class EnemyController : MonoBehaviour
                 case "crouch":
                     _character.SetCrouch((bool)dataChange.Value);
                     break;
-                case "g":
+                case "gun":
                     _armory.SwitchGun(Convert.ToInt32(dataChange.Value));
                     break;
                 default:

@@ -39,7 +39,7 @@ public class PlayerArmory : MonoBehaviour
     {
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
-            { "g", index }
+            { "gun", index }
         };
         MultiplayerManager.Instance.SendMessage("gunChange", data);
     }

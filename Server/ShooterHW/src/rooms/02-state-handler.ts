@@ -5,12 +5,17 @@ const spawnPoints = [
     { x: -20, y: 0, z: -20 },
     { x: 20, y: 0, z: 20 },
     { x: -20, y: 0, z: 20 },
-    { x: 20, y: 0, z: -20 },    
+    { x: 20, y: 0, z: -20 },
+    { x: 10, y: 0, z: -10 },
+    { x: -10, y: 0, z: 10 },
+    { x: -10, y: 0, z: -10 },
+    { x: 10, y: 0, z: -10 },
+
 ];
 
 export class Player extends Schema {
     @type("number")
-    g = 1;    
+    gun = 1;    
 
     @type("uint8")
     loss = 0;
@@ -67,9 +72,12 @@ export class State extends Schema {
         this.freeSpawnPoints.splice(index, 1); //удаление точки из свободных
         return point;
     }
+
     releaseSpawnPoint(point: {x: number; y: number; z: number}) {
         this.freeSpawnPoints.push(point); //возвращение точки в массив
     }
+
+    playerSpawnPoints = new MapSchema<{x: number; y: number; z: number}>(); //структура для хранения текущей спавн-точки игрока
 
     createPlayer(sessionId: string, data: any) {
         const spawnPoint = this.getSpawnPoint() || { x: 0, y: 0, z: 0 };
@@ -85,6 +93,7 @@ export class State extends Schema {
         player.pZ = spawnPoint.z;
 
         this.players.set(sessionId, player);
+        this.playerSpawnPoints.set(sessionId, spawnPoint);
     }
 
     removePlayer(sessionId: string) {
@@ -93,12 +102,12 @@ export class State extends Schema {
             //возвращение точки спавна в массив
             this.releaseSpawnPoint({x: player.pX, y: player.pY, z: player.pZ});
             this.players.delete(sessionId);
-        }
-        
+        }        
     }
 
     movePlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
+        this.releaseSpawnPoint(this.playerSpawnPoints.get(sessionId)); //возвращение точки спавна в массив
         player.pX = data.pX;
         player.pY = data.pY;
         player.pZ = data.pZ;
@@ -106,7 +115,8 @@ export class State extends Schema {
         player.vY = data.vY;
         player.vZ = data.vZ;        
         player.rX = data.rX;
-        player.rY = data.rY;                
+        player.rY = data.rY;
+                        
     }
     crouchPlayer (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
@@ -115,7 +125,7 @@ export class State extends Schema {
     
     changeGun (sessionId: string, data: any) {
         const player = this.players.get(sessionId);
-        player.g = data.g;     
+        player.gun = data.gun;     
     } 
 }
 
@@ -156,16 +166,31 @@ export class StateHandlerRoom extends Room<State> {
 
             player.loss++;
             player.currentHP = player.maxHP;
+
+            //если точка спавна все еще зарезервирована умершим, возвращаем ее в массив
+            const oldSpawn = this.state.playerSpawnPoints.get(data.id);
+            if(oldSpawn) {
+            this.state.releaseSpawnPoint(oldSpawn);
+            }            
  
+            //for(var i=0; i < this.clients.length; i++){
+                //if(this.clients[i].id != clientID) continue;
+                //const x = Math.floor(Math.random() * 50) -25;
+                //const z = Math.floor(Math.random() * 50) -25;
+
+                //const message = JSON.stringify({x, z});
+                //this.clients[i].send("Restart", message);
+            //}
             for(var i=0; i < this.clients.length; i++){
-                if(this.clients[i].id != clientID) continue;
-                const x = Math.floor(Math.random() * 50) -25;
-                const z = Math.floor(Math.random() * 50) -25;
+            if(this.clients[i].id != clientID) continue;
 
-                const message = JSON.stringify({x, z});
-                this.clients[i].send("Restart", message);
+            //выделяем новую точку для возрождения
+            const newSpawn = this.state.getSpawnPoint() || {x:0, y:0, z:0};
+            this.state.playerSpawnPoints.set(data.id, newSpawn);
+
+            const message = JSON.stringify({ x: newSpawn.x, z: newSpawn.z });
+            this.clients[i].send("Restart", message);
             }           
-
         })
     }
 
@@ -186,5 +211,4 @@ export class StateHandlerRoom extends Room<State> {
     onDispose () {
         console.log("Dispose StateHandlerRoom");
     }
-
 }

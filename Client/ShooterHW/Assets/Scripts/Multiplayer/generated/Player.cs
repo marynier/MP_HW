@@ -9,7 +9,7 @@ using Colyseus.Schema;
 
 public partial class Player : Schema {
 	[Type(0, "number")]
-	public float g = default(float);
+	public float gun = default(float);
 
 	[Type(1, "uint8")]
 	public byte loss = default(byte);
