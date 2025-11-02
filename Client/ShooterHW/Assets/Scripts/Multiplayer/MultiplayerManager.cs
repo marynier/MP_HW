@@ -20,16 +20,11 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     }
 
     private async void Connect()
-    {
-        _playersCoordinates.GetSpawnCoordinates(out var spawnX, out var spawnZ);
-
-
+    {       
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
             { "speed", _player.speed },
-            { "hp", _player.maxHealth },
-            { "pX", spawnX },
-            { "pZ", spawnZ }
+            { "hp", _player.maxHealth }           
         };
 
         _room = await Instance.client.JoinOrCreate<State>("state_handler", data);

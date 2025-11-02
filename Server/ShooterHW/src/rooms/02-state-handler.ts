@@ -1,6 +1,13 @@
 import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
+const spawnPoints = [
+    { x: -20, y: 0, z: -20 },
+    { x: 20, y: 0, z: 20 },
+    { x: -20, y: 0, z: 20 },
+    { x: 20, y: 0, z: -20 },    
+];
+
 export class Player extends Schema {
     @type("number")
     g = 1;    
@@ -51,19 +58,43 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
+    freeSpawnPoints: { x: number; y: number; z: number }[] = [...spawnPoints];
+
+    getSpawnPoint(): { x: number; y: number; z: number } | null {
+        if (this.freeSpawnPoints.length === 0) return null;
+        const index = Math.floor(Math.random() * this.freeSpawnPoints.length);
+        const point = this.freeSpawnPoints[index];
+        this.freeSpawnPoints.splice(index, 1); //удаление точки из свободных
+        return point;
+    }
+    releaseSpawnPoint(point: {x: number; y: number; z: number}) {
+        this.freeSpawnPoints.push(point); //возвращение точки в массив
+    }
+
     createPlayer(sessionId: string, data: any) {
+        const spawnPoint = this.getSpawnPoint() || { x: 0, y: 0, z: 0 };
+
         const player = new Player();
         player.maxHP = data.hp;
         player.currentHP = data.hp;
         player.speed = data.speed;
-        player.pX = data.pX;
-        player.pZ = data.pZ;
+
+        //использование выделенной на сервере позиции
+        player.pX = spawnPoint.x;
+        player.pY = spawnPoint.y;
+        player.pZ = spawnPoint.z;
 
         this.players.set(sessionId, player);
     }
 
     removePlayer(sessionId: string) {
-        this.players.delete(sessionId);
+        const player = this.players.get(sessionId);
+        if(player) {
+            //возвращение точки спавна в массив
+            this.releaseSpawnPoint({x: player.pX, y: player.pY, z: player.pZ});
+            this.players.delete(sessionId);
+        }
+        
     }
 
     movePlayer (sessionId: string, data: any) {
