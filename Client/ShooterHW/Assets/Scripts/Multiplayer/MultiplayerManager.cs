@@ -7,12 +7,13 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     [field: SerializeField] public LossCounter _lossCounter { get; private set; }
     [SerializeField] private PlayerCharacter _player;
     [SerializeField] private EnemyController _enemy;
+    [SerializeField] private PlayersCoordinates _playersCoordinates;
 
     private ColyseusRoom<State> _room;
     private Dictionary<string, EnemyController> _enemies = new Dictionary<string, EnemyController>();
 
     protected override void Awake()
-    {
+    {        
         base.Awake();
         Instance.InitializeClient();
         Connect();
@@ -20,10 +21,15 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
     private async void Connect()
     {
+        _playersCoordinates.GetSpawnCoordinates(out var spawnX, out var spawnZ);
+
+
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
             { "speed", _player.speed },
-            { "hp", _player.maxHealth }
+            { "hp", _player.maxHealth },
+            { "pX", spawnX },
+            { "pZ", spawnZ }
         };
 
         _room = await Instance.client.JoinOrCreate<State>("state_handler", data);
