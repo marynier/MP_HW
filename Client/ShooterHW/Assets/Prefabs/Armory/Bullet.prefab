@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1300046248862336309}
   - component: {fileID: 8224612866515182060}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 3626123506275277913}
   - component: {fileID: 8977395887448650419}
   - component: {fileID: 7582202770469758421}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 7961378916582048871}
   - component: {fileID: 7645070843024103640}
   - component: {fileID: 5030747541302633292}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -329,3 +329,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   _lifeTime: 5
   _rigidbody: {fileID: 7645070843024103640}
+  _damageEffectPrefab: {fileID: 2499024531279582641, guid: afdd7c09fceaaec41bfca81ee444a243, type: 3}

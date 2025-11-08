@@ -12,22 +12,36 @@ public class Controller : MonoBehaviour
     private PlayerGun _gun;
     private bool _wasCrouched = false;
     private bool _hold = false;
+    private bool _hideCursor;
 
     private void Start()
     {
         _multiplayerManager = MultiplayerManager.Instance;
+        _hideCursor = true;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            _hideCursor = !_hideCursor;
+            Cursor.lockState = _hideCursor ? CursorLockMode.Locked : CursorLockMode.None;
+        }
+
         if (_hold) return;
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        bool isShoot = Input.GetMouseButton(0);
+        float mouseX = 0;
+        float mouseY = 0;
+        bool isShoot = false;
+        if (_hideCursor)
+        {
+            mouseX = Input.GetAxis("Mouse X");
+            mouseY = Input.GetAxis("Mouse Y");
+            isShoot = Input.GetMouseButton(0);
+        }
 
         bool space = Input.GetKeyDown(KeyCode.Space);
 
@@ -59,7 +73,7 @@ public class Controller : MonoBehaviour
     {
         shootInfo.key = _multiplayerManager.GetSessionID();
         string json = JsonUtility.ToJson(shootInfo);
-        _multiplayerManager.SendMessage("shoot", json);
+        _multiplayerManager.SendInfo("shoot", json);
     }
 
     private void SendMove()
@@ -76,7 +90,7 @@ public class Controller : MonoBehaviour
             { "rX", rotateX },
             { "rY", rotateY }
         };
-        MultiplayerManager.Instance.SendMessage("move", data);
+        MultiplayerManager.Instance.SendInfo("move", data);
     }
 
     private void SendCrouch()
@@ -87,30 +101,33 @@ public class Controller : MonoBehaviour
             {"crouch", crouch }
         };
 
-        MultiplayerManager.Instance.SendMessage("crouch", data);
+        MultiplayerManager.Instance.SendInfo("crouch", data);
     }
 
-    public void Restart(string jsonRestartInfo)
+    public void Restart(int spawnIndex)
     {
-        RestartInfo info = JsonUtility.FromJson<RestartInfo>(jsonRestartInfo);
+        _multiplayerManager._spawnPoints.GetPoint(spawnIndex, out Vector3 position, out Vector3 rotation);
         StartCoroutine(Hold());
 
-        _player.transform.position = new Vector3(info.x, 0, info.z);
+        _player.transform.position = position;
+        rotation.x = 0;
+        rotation.z = 0;
+        _player.transform.eulerAngles = rotation;
         _player.SetInput(0, 0, 0);
 
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
-            { "pX", info.x },
-            { "pY", 0 },
-            { "pZ", info.z },
+            { "pX", position.x },
+            { "pY", position.y },
+            { "pZ", position.z },
             { "vX", 0 },
             { "vY", 0 },
             { "vZ", 0 },
             { "rX", 0 },
-            { "rY", 0 }
+            { "rY", rotation.y }
         };
 
-        _multiplayerManager.SendMessage("move", data);
+        _multiplayerManager.SendInfo("move", data);
     }
 
     private IEnumerator Hold()
@@ -136,11 +153,4 @@ public struct ShootInfo
     public float dX;
     public float dY;
     public float dZ;
-}
-
-[Serializable]
-public struct RestartInfo
-{
-    public float x;
-    public float z;
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class EnemyCharacter : Character
@@ -15,7 +16,7 @@ public class EnemyCharacter : Character
     //плавный поворот
     [SerializeField] private float _rotationSpeed = 360f;
     private float _targetYrotation;
-    private float _targetXrotation;
+    private float _targetXrotation;    
 
     public void Init(string sessionID)
     {
@@ -83,17 +84,17 @@ public class EnemyCharacter : Character
         float rayDistance = 1.0f;
         Vector3 rayOrigin = new Vector3(desiredPosition.x, desiredPosition.y + rayDistance, desiredPosition.z);
         if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayDistance * 2))
-        {            
+        {
             desiredPosition.y = Mathf.Max(desiredPosition.y, hit.point.y);
         }
 
         //проверка стен
-        Vector3 direction = desiredPosition - transform.position;
-        float distance = direction.magnitude;
+        Vector3 direction = desiredPosition - transform.position;        
         direction.Normalize();
+        float wallRayDistance = 0.1f;
 
-        if (Physics.Raycast(transform.position, direction, out hit, distance))
-        {            
+        if (Physics.Raycast(transform.position, direction, out hit, wallRayDistance))
+        {
             desiredPosition = hit.point - direction * 0.1f;
         }
 
@@ -117,14 +118,14 @@ public class EnemyCharacter : Character
     }
     public void ApplyDamage(int damage)
     {
-        _health.ApplyDamage(damage);
+        _health.ApplyDamage(damage);       
 
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
             { "id", _sessionID },
             {"value", damage }
         };
-        MultiplayerManager.Instance.SendMessage("damage", data);
+        MultiplayerManager.Instance.SendInfo("damage", data);
     }
     public void SetRotateX(float value)
     {

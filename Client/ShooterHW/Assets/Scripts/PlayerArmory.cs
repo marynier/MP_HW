@@ -41,6 +41,6 @@ public class PlayerArmory : MonoBehaviour
         {
             { "gun", index }
         };
-        MultiplayerManager.Instance.SendMessage("gunChange", data);
+        MultiplayerManager.Instance.SendInfo("gunChange", data);
     }
 }
