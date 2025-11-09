@@ -9,13 +9,13 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
     [field: SerializeField] public LossCounter _lossCounter { get; private set; }
     [field: SerializeField] public SpawnPoints _spawnPoints { get; private set; }
     [SerializeField] private PlayerCharacter _player;
-    [SerializeField] private EnemyController _enemy;    
+    [SerializeField] private EnemyController _enemy;
 
     private ColyseusRoom<State> _room;
     private Dictionary<string, EnemyController> _enemies = new Dictionary<string, EnemyController>();
 
     protected override void Awake()
-    {        
+    {
         base.Awake();
         Instance.InitializeClient();
         Connect();
@@ -23,18 +23,32 @@ public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 
     private async void Connect()
     {
-        _spawnPoints.GetPoint(Random.Range(0, _spawnPoints.length), out Vector3 spawnPosition, out Vector3 spawnRotation);
+        //_spawnPoints.GetPoint(Random.Range(0, _spawnPoints.length), out Vector3 spawnPosition, out Vector3 spawnRotation);
+
+        List<Dictionary<string, float>> spawnPoints = new List<Dictionary<string, float>>();
+        foreach (Transform point in _spawnPoints.Points)
+        {
+            spawnPoints.Add(new Dictionary<string, float>
+            {
+            {"x", point.position.x},
+            {"y", point.position.y},
+            {"z", point.position.z},
+            {"rY", point.rotation.y}
+            });
+        }
+
 
         Dictionary<string, object> data = new Dictionary<string, object>()
         {
+            {"spawnPoints", spawnPoints},
             { "skins", _skins.length },
             { "points", _spawnPoints.length },
             { "speed", _player.speed },
-            { "hp", _player.maxHealth },
-            {"pX", spawnPosition.x },
-            {"pY", spawnPosition.y },
-            {"pZ", spawnPosition.z },
-            {"rY", spawnRotation.y }
+            { "hp", _player.maxHealth }
+            //{"pX", spawnPosition.x },
+            //{"pY", spawnPosition.y },
+            //{"pZ", spawnPosition.z },
+            //{"rY", spawnRotation.y }
         };
 
         _room = await Instance.client.JoinOrCreate<State>("state_handler", data);

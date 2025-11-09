@@ -2,19 +2,21 @@
 
 public class SpawnPoints : MonoBehaviour
 {
-    [SerializeField] private Transform[] _points;
+    [field: SerializeField] public Transform[] Points { get; private set; }
 
-    public int length { get { return _points.Length; } }
+    public int length { get { return Points.Length; } }
+
+
 
     public void GetPoint(int index, out Vector3 position, out Vector3 rotation)
     {
-        if (index >= _points.Length)
+        if (index >= Points.Length)
         {
             position = Vector3.zero;
             rotation = Vector3.zero;
             return;
         }
-        position = _points[index].position;
-        rotation = _points[index].eulerAngles;
+        position = Points[index].position;
+        rotation = Points[index].eulerAngles;
     }
 }
