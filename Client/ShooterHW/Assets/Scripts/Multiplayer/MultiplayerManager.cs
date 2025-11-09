@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Colyseus;
 using UnityEngine;
-using static UnityEngine.InputManagerEntry;
 
 public class MultiplayerManager : ColyseusManager<MultiplayerManager>
 {

@@ -1,18 +1,6 @@
 import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
-const spawnPoints = [
-    { x: -20, y: 0, z: -20 },
-    { x: 20, y: 0, z: 20 },
-    { x: -20, y: 0, z: 20 },
-    { x: 20, y: 0, z: -20 },
-    { x: 10, y: 0, z: -10 },
-    { x: -10, y: 0, z: 10 },
-    { x: -10, y: 0, z: -10 },
-    { x: 10, y: 0, z: -10 },
-
-];
-
 export class Player extends Schema {
     @type("uint8")
     skin = 0;
@@ -66,24 +54,7 @@ export class State extends Schema {
 
     something = "This attribute won't be sent to the client-side";
 
-    //freeSpawnPoints: { x: number; y: number; z: number }[] = [...spawnPoints];
-
-    // getSpawnPoint(): { x: number; y: number; z: number } | null {
-    //     if (this.freeSpawnPoints.length === 0) return null;
-    //     const index = Math.floor(Math.random() * this.freeSpawnPoints.length);
-    //     const point = this.freeSpawnPoints[index];
-    //     this.freeSpawnPoints.splice(index, 1); //удаление точки из свободных
-    //     return point;
-    // }
-
-    // releaseSpawnPoint(point: {x: number; y: number; z: number}) {
-    //     this.freeSpawnPoints.push(point); //возвращение точки в массив
-    // }
-
-    //playerSpawnPoints = new MapSchema<{x: number; y: number; z: number}>(); //структура для хранения текущей спавн-точки игрока
-
-    createPlayer(sessionId: string, data: any, skin: number) {
-        //const spawnPoint = this.getSpawnPoint() || { x: 0, y: 0, z: 0 };
+    createPlayer(sessionId: string, data: any, skin: number) {       
 
         const player = new Player();
         player.skin = skin;
@@ -93,29 +64,20 @@ export class State extends Schema {
         player.pX = data.pX;
         player.pY = data.pY;
         player.pZ = data.pZ;
-        player.rY = data.rY;
+        player.rY = data.rY;        
 
-        //использование выделенной на сервере позиции
-        //player.pX = spawnPoint.x;
-        //player.pY = spawnPoint.y;
-        //player.pZ = spawnPoint.z;
-
-        this.players.set(sessionId, player);
-        //this.playerSpawnPoints.set(sessionId, spawnPoint);
+        this.players.set(sessionId, player);        
     }
 
     removePlayer(sessionId: string) {
         const player = this.players.get(sessionId);
-        if(player) {
-            //возвращение точки спавна в массив
-            //this.releaseSpawnPoint({x: player.pX, y: player.pY, z: player.pZ});
+        if(player) {            
             this.players.delete(sessionId);
         }        
     }
 
     movePlayer (sessionId: string, data: any) {
-        const player = this.players.get(sessionId);
-        //this.releaseSpawnPoint(this.playerSpawnPoints.get(sessionId)); //возвращение точки спавна в массив
+        const player = this.players.get(sessionId);        
         player.pX = data.pX;
         player.pY = data.pY;
         player.pZ = data.pZ;
@@ -165,7 +127,7 @@ export class StateHandlerRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
-        this.setPatchRate(50);
+        //this.setPatchRate(50);
 
         this.onMessage("move", (client, data) => {
             //console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
@@ -201,21 +163,7 @@ export class StateHandlerRoom extends Room<State> {
                 const point = Math.floor(Math.random() * this.spawnPointCount);
                 
                 this.clients[i].send("Restart", point);
-            }  
-
-            //если точка спавна все еще зарезервирована умершим, возвращаем ее в массив
-            //const oldSpawn = this.state.playerSpawnPoints.get(data.id);
-            //if(oldSpawn) {
-            //this.state.releaseSpawnPoint(oldSpawn);
-            //}            
- 
-            //выделяем новую точку для возрождения
-            //const newSpawn = this.state.getSpawnPoint() || {x:0, y:0, z:0};
-            //this.state.playerSpawnPoints.set(data.id, newSpawn);
-
-            //const message = JSON.stringify({ x: newSpawn.x, z: newSpawn.z });
-            //this.clients[i].send("Restart", message);
-            //}           
+            }      
         })
     }
 

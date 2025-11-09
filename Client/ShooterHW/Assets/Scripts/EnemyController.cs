@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private EnemyCharacter _character;
@@ -60,7 +59,6 @@ public class EnemyController : MonoBehaviour
         _receiveTimeInterval.Add(interval);
         _receiveTimeInterval.RemoveAt(0);
     }
-
 
     internal void OnChange(List<DataChange> changes)
     {

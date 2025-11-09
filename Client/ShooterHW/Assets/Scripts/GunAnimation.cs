@@ -4,12 +4,7 @@ public class GunAnimation : MonoBehaviour
 {
     private const string shoot = "Shoot";
     [SerializeField] private Animator _animator;
-    private Gun _gun;
-
-    //private void Start()
-    //{        
-    //    _gun.shoot += Shoot;
-    //}
+    private Gun _gun;    
 
     private void Shoot()
     {

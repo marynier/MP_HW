@@ -7,10 +7,12 @@ public class GunRay : MonoBehaviour
     [SerializeField] private Transform _point;
     [SerializeField] private float _pointSize;
     private Transform _camera;
+
     private void Awake()
     {
         _camera = Camera.main.transform;
     }
+
     private void Update()
     {
         Ray ray = new Ray(_center.position, _center.forward);

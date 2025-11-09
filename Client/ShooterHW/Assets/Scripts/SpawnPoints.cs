@@ -3,7 +3,6 @@
 public class SpawnPoints : MonoBehaviour
 {
     [SerializeField] private Transform[] _points;
-
     public int length { get { return _points.Length; } }
 
     public void GetPoint(int index, out Vector3 position, out Vector3 rotation)
