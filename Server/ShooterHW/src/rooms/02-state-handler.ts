@@ -1,17 +1,17 @@
 import { Room, Client } from "colyseus";
 import { Schema, type, MapSchema } from "@colyseus/schema";
 
-// const spawnPoints = [
-//     { x: -20, y: 0, z: -20 },
-//     { x: 20, y: 0, z: 20 },
-//     { x: -20, y: 0, z: 20 },
-//     { x: 20, y: 0, z: -20 },
-//     { x: 10, y: 0, z: -10 },
-//     { x: -10, y: 0, z: 10 },
-//     { x: -10, y: 0, z: -10 },
-//     { x: 10, y: 0, z: -10 },
+const spawnPoints = [
+    { x: -20, y: 0, z: -20 },
+    { x: 20, y: 0, z: 20 },
+    { x: -20, y: 0, z: 20 },
+    { x: 20, y: 0, z: -20 },
+    { x: 10, y: 0, z: -10 },
+    { x: -10, y: 0, z: 10 },
+    { x: -10, y: 0, z: -10 },
+    { x: 10, y: 0, z: -10 },
 
-// ];
+];
 
 export class Player extends Schema {
     @type("uint8")
@@ -65,29 +65,6 @@ export class State extends Schema {
     players = new MapSchema<Player>();
 
     something = "This attribute won't be sent to the client-side";
-
-    @type(["number"])
-    spawnPoints: {x: number; y: number; z: number}[] = [];
-    freeSpawnPoints: {x: number; y: number; z: number}[] = [];
-    playerSpawnPoints = new MapSchema<{x: number; y: number; z: number}>();
-
-    initSpawnPoints(points: {x: number; y: number; z: number}[]) {
-        this.spawnPoints = points;
-        this.freeSpawnPoints = [...points];
-    }
-
-    getSpawnPoint(): { x: number; y: number; z: number } | null {
-        if (this.freeSpawnPoints.length === 0) return null;
-        const idx = Math.floor(Math.random() * this.freeSpawnPoints.length);
-        const point = this.freeSpawnPoints[idx];
-        this.freeSpawnPoints.splice(idx, 1);
-        return point;
-    }
-
-    releaseSpawnPoint(point: {x: number; y: number; z: number}) {
-        this.freeSpawnPoints.push(point);
-    }
-
 
     //freeSpawnPoints: { x: number; y: number; z: number }[] = [...spawnPoints];
 
@@ -147,9 +124,6 @@ export class State extends Schema {
         player.vZ = data.vZ;        
         player.rX = data.rX;
         player.rY = data.rY;
-        
-        const spawn = this.playerSpawnPoints.get(sessionId);
-        if (spawn) this.releaseSpawnPoint(spawn);
                         
     }
     crouchPlayer (sessionId: string, data: any) {
@@ -191,8 +165,7 @@ export class StateHandlerRoom extends Room<State> {
         console.log("StateHandlerRoom created!", options);
 
         this.setState(new State());
-        //this.setPatchRate(50);
-        this.state.initSpawnPoints(options.spawnPoints);
+        this.setPatchRate(50);
 
         this.onMessage("move", (client, data) => {
             //console.log("StateHandlerRoom received message from", client.sessionId, ":", data);
@@ -250,26 +223,14 @@ export class StateHandlerRoom extends Room<State> {
         return true;
     }
 
-    onJoin (client: Client, options: any) {
+    onJoin (client: Client, data: any) {
         if(this.clients.length > 1) this.lock();
-        const spawn = this.state.getSpawnPoint() || {x:0, y:0, z:0};
-        this.state.playerSpawnPoints.set(client.sessionId, spawn); //привязать точку к игроку
+        
         const skin = this.skins[this.clients.length -1];
-        this.state.createPlayer(client.sessionId, {
-        ...options,
-        pX: spawn.x,
-        pY: spawn.y,
-        pZ: spawn.z,
-        }, skin);
+        this.state.createPlayer(client.sessionId, data, skin);
     }
 
     onLeave (client) {
-        const spawn = this.state.playerSpawnPoints.get(client.sessionId);
-        if (spawn) {
-        this.state.releaseSpawnPoint(spawn);
-        this.state.playerSpawnPoints.delete(client.sessionId);
-        }
-
         this.state.removePlayer(client.sessionId);
     }
 
