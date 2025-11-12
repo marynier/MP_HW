@@ -82,22 +82,40 @@ public class EnemyCharacter : Character
 
 
         //проверка стен и пола
-        Vector3 origin = transform.position;       
+        Vector3 origin = transform.position;
         Vector3 direction = desiredPosition - origin;
         float distance = direction.magnitude;
-        float maxDistance = float.MaxValue;
+        //float maxDistance = float.MaxValue;
 
-        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, _moveRaycastMask);
-        foreach (var hit in hits)
+        //RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, _moveRaycastMask);
+        //foreach (var hit in hits)
+        //{
+        //    var currentDistance = Vector3.Distance(transform.position, hit.point);
+        //    if (maxDistance < currentDistance) continue;
+        //    maxDistance = currentDistance;
+
+        //    desiredPosition = hit.point;
+        //}
+
+        //ограничиваем максимальную дистанцию проверки до 0.5
+        float maxCheckDistance = Mathf.Min(distance, 0.5f);
+        float closestWallDistance = maxCheckDistance;
+
+        if (maxCheckDistance > 0)
         {
-            var currentDistance = Vector3.Distance(transform.position, hit.point);
-            if (maxDistance < currentDistance) continue;
-            maxDistance = currentDistance;
-
-            desiredPosition = hit.point;
+            RaycastHit[] hits = Physics.RaycastAll(origin, direction.normalized, maxCheckDistance, _moveRaycastMask);
+            foreach (var hit in hits)
+            {
+                if (hit.distance < closestWallDistance)
+                {
+                    closestWallDistance = hit.distance;
+                    
+                    desiredPosition = origin + direction.normalized * hit.distance;
+                }
+            }
         }
 
-        targetPosition = desiredPosition;        
+        targetPosition = desiredPosition;
         _velocityMagnitude = velocity.magnitude;
 
         this.velocity = velocity;
