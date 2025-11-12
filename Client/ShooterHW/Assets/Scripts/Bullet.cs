@@ -31,20 +31,13 @@ public class Bullet : MonoBehaviour
     {
         if (collision.collider.TryGetComponent(out EnemyBodyPart bodyPart))
         {
-            int totalDamage = _damage * bodyPart.DamageMultiplier;
-            var enemy = collision.collider.GetComponentInParent<EnemyCharacter>();
-            enemy.ApplyDamage(totalDamage);
+            bodyPart.ApplyDamage(_damage, out int totalDamage); 
             
-            Color color;
-            if (bodyPart.CriticalPart) color = Color.red;
-            else color = Color.yellow;
+            Color color = bodyPart.CriticalPart ? Color.red : Color.yellow;
+            
             DamageEffect newEffect = Instantiate(_damageEffectPrefab, transform.position, Quaternion.identity);
             newEffect.Setup(totalDamage, color);
         }
-        //if (collision.collider.TryGetComponent(out EnemyCharacter enemy))
-        //{
-        //    enemy.ApplyDamage(_damage);
-        //}
         Destroy();
     }
 }

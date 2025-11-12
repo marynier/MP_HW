@@ -681,6 +681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7f0ab67c8816f4b9dff3063752e64e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Controller
+  _armory: {fileID: 7973695074321222690}
   _restartDelay: 3
   _player: {fileID: 7371821139289732093}
   _mouseSensitivity: 2

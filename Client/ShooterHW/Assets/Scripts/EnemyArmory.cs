@@ -5,12 +5,7 @@ public class EnemyArmory : MonoBehaviour
     [SerializeField] private EnemyGun[] _guns;
     [SerializeField] private EnemyController _controller;
     [SerializeField] private GunAnimation _gunAnimation;
-    private EnemyGun _currentGun;
-
-    private void Awake()
-    {
-        SwitchGun(1);
-    }
+    private EnemyGun _currentGun;        
 
     public void SwitchGun(int armoryIndex)
     {

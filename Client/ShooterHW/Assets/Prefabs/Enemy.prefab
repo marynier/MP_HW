@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 1720291826068215231}
   - component: {fileID: 5937779209356039966}
   - component: {fileID: 8177110900688562995}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
@@ -79,9 +79,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
   <maxHealth>k__BackingField: 10
   <speed>k__BackingField: 2
+  _moveRaycastMask:
+    serializedVersion: 2
+    m_Bits: 247
   _health: {fileID: 1720291826068215231}
   _head: {fileID: 8175982285860734308}
-  _rotationSpeed: 360
+  _rotationSpeed: 20
 --- !u!114 &5644414334208369574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,7 +210,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6391565547894107329}
   - component: {fileID: 1555642740816995722}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Blaster_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,7 +257,7 @@ GameObject:
   - component: {fileID: 1256001431321881772}
   - component: {fileID: 7356851037647313807}
   - component: {fileID: 4383504065487219011}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: FilledImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +334,7 @@ GameObject:
   - component: {fileID: 391086390914927213}
   - component: {fileID: 6012134627894327906}
   - component: {fileID: 2906929715922702407}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +448,7 @@ GameObject:
   m_Component:
   - component: {fileID: 381317998781487161}
   - component: {fileID: 7866251863377952431}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Blaster_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -491,7 +494,7 @@ GameObject:
   m_Component:
   - component: {fileID: 875256887919264461}
   - component: {fileID: 2696926958770732299}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Gun_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -538,7 +541,7 @@ GameObject:
   - component: {fileID: 3390127538038097115}
   - component: {fileID: 1485613731937026340}
   - component: {fileID: 3134484861449212208}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: gun_e03_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -626,7 +629,7 @@ GameObject:
   m_Component:
   - component: {fileID: 630646898060118016}
   - component: {fileID: 6725635485221850178}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Blaster_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -674,7 +677,7 @@ GameObject:
   - component: {fileID: 4168595341517946124}
   - component: {fileID: 7619128395683296751}
   - component: {fileID: 1994956644308547391}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: BackgroundHP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -811,9 +814,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1727348531506677991, guid: 5042ba9887408bd4fb9e06591aad3feb, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5042ba9887408bd4fb9e06591aad3feb, type: 3}
       propertyPath: m_Name
       value: Cosmic_Retro_Blaster_10
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5042ba9887408bd4fb9e06591aad3feb, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5042ba9887408bd4fb9e06591aad3feb, type: 3}
       propertyPath: m_IsActive
@@ -838,12 +849,56 @@ PrefabInstance:
     m_TransformParent: {fileID: 3759881493022640163}
     m_Modifications:
     - target: {fileID: 382555114303413744, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 382555114303413744, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1252726368819672324, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1252726368819672324, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1353124930166315174, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1516538309542306473, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1546179964476495164, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1970853719666481756, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2182973176440884812, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2386391312946247434, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2463466222209524044, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3207120230412455351, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3499506445177207741, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3499506445177207741, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
@@ -852,6 +907,14 @@ PrefabInstance:
     - target: {fileID: 3783090178872861316, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_Name
       value: NewCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 3783090178872861316, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4127218544057037928, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4597028247493687358, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -894,24 +957,72 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4874820608474953760, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874820608474953760, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4910384957521570809, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 4910384957521570809, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5533890095903291548, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5533890095903291548, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773215855315535954, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5773215855315535954, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5871991987233204742, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6583545411633399629, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7095066610750946144, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7211167632888149006, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7345768215894227303, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7345768215894227303, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7647427568600618671, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8113055938598341201, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8457818094980660487, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1019,6 +1130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBodyPart
   <DamageMultiplier>k__BackingField: 1
   <CriticalPart>k__BackingField: 0
+  _character: {fileID: 5738736174042370067}
 --- !u!4 &1995398238696064999 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4597028247493687358, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
@@ -1066,6 +1178,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBodyPart
   <DamageMultiplier>k__BackingField: 1
   <CriticalPart>k__BackingField: 0
+  _character: {fileID: 5738736174042370067}
 --- !u!23 &2638906267920120800 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 64668538312934457, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
@@ -1113,6 +1226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBodyPart
   <DamageMultiplier>k__BackingField: 1
   <CriticalPart>k__BackingField: 0
+  _character: {fileID: 5738736174042370067}
 --- !u!23 &4582245742342690602 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2012423814642051315, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
@@ -1137,6 +1251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBodyPart
   <DamageMultiplier>k__BackingField: 2
   <CriticalPart>k__BackingField: 1
+  _character: {fileID: 5738736174042370067}
 --- !u!136 &774847340055254397
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1254,6 +1369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBodyPart
   <DamageMultiplier>k__BackingField: 1
   <CriticalPart>k__BackingField: 0
+  _character: {fileID: 5738736174042370067}
 --- !u!4 &8175982285860734308 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6128295628213254845, guid: 5b9e5150db7b2204d98b5f69a683d1e6, type: 3}
@@ -1350,6 +1466,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cosmic_Retro_Blaster_11
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 50bdff26913af5f4785b8e8bc6f0bfe6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2471486951810847870, guid: 50bdff26913af5f4785b8e8bc6f0bfe6, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1423,6 +1547,14 @@ PrefabInstance:
     - target: {fileID: 3328256348284101877, guid: 4023b7c8c0a37df46976642ffba9d16f, type: 3}
       propertyPath: m_Name
       value: Cosmic_Retro_Blaster_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3328256348284101877, guid: 4023b7c8c0a37df46976642ffba9d16f, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8697530319759381179, guid: 4023b7c8c0a37df46976642ffba9d16f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

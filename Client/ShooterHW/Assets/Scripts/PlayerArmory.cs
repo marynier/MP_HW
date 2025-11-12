@@ -2,45 +2,32 @@
 using UnityEngine;
 
 public class PlayerArmory : MonoBehaviour
-{    
-    [SerializeField] private PlayerGun[] _guns;
-    [SerializeField] private Controller _controller;
+{
+    [SerializeField] private PlayerGun[] _guns;    
     [SerializeField] private GunAnimation _gunAnimation;
     private PlayerGun _currentGun;
-    
-    private void Awake()
+    public int gunsCount => _guns.Length;    
+        
+    public bool TryChangeGun(int index, out PlayerGun gun)
     {
-        SwitchGun(1);        
+        gun = null;
+        int count = _guns.Length;
+        if (index < 0 || index >= count) return false;
+
+        SwitchGun(index);
+
+        gun = _currentGun;
+        return true;
     }
 
-    void Update()
+    private void SwitchGun(int index)
     {
-        for (int i = 0; i < 5; i++)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha0 + i))
-            {
-                SwitchGun(i);
-                SendGunChange(i);
-            }
-        }
-    }
-
-    public void SwitchGun(int index)
-    {       
         if (_currentGun != null) _currentGun.gameObject.SetActive(false);
         PlayerGun chosenGun = _guns[index];
         chosenGun.gameObject.SetActive(true);
-        _currentGun = chosenGun;
-        _controller.SetGun(chosenGun);
+        _currentGun = chosenGun;        
         _gunAnimation.SetGun(_currentGun);
     }
 
-    void SendGunChange(int index)
-    {
-        Dictionary<string, object> data = new Dictionary<string, object>()
-        {
-            { "gun", index }
-        };
-        MultiplayerManager.Instance.SendInfo("gunChange", data);
-    }
+    
 }

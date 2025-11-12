@@ -6,6 +6,7 @@ public class EnemyCharacter : Character
 {
     private string _sessionID;
 
+    [SerializeField] private LayerMask _moveRaycastMask;
     [SerializeField] private Health _health;
     [SerializeField] private Transform _head;
     public Vector3 targetPosition { get; private set; } = Vector3.zero;
@@ -16,7 +17,7 @@ public class EnemyCharacter : Character
     //плавный поворот
     [SerializeField] private float _rotationSpeed = 360f;
     private float _targetYrotation;
-    private float _targetXrotation;    
+    private float _targetXrotation;
 
     public void Init(string sessionID)
     {
@@ -40,7 +41,7 @@ public class EnemyCharacter : Character
         }
         else
         {
-            transform.position = targetPosition;
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 20 * Time.deltaTime);
         }
 
         //расчет поворота
@@ -79,28 +80,22 @@ public class EnemyCharacter : Character
     {
         Vector3 desiredPosition = position + (velocity * averageInterval);
 
-        //проверка пола
-        RaycastHit hit;
-        float rayDistance = 1.0f;
-        Vector3 rayOrigin = new Vector3(desiredPosition.x, desiredPosition.y + rayDistance, desiredPosition.z);
-        if (Physics.Raycast(rayOrigin, Vector3.down, out hit, rayDistance * 2))
+        Vector3 origin = transform.position;       
+        Vector3 direction = desiredPosition - origin;
+        float distance = direction.magnitude;
+        float maxDistance = float.MaxValue;
+
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, _moveRaycastMask);
+        foreach (var hit in hits)
         {
-            desiredPosition.y = Mathf.Max(desiredPosition.y, hit.point.y);
+            var currentDistance = Vector3.Distance(transform.position, hit.point);
+            if (maxDistance < currentDistance) continue;
+            maxDistance = currentDistance;
+
+            desiredPosition = hit.point;
         }
 
-        //проверка стен
-        Vector3 direction = desiredPosition - transform.position;        
-        direction.Normalize();
-        float wallRayDistance = 0.1f;
-
-        if (Physics.Raycast(transform.position, direction, out hit, wallRayDistance))
-        {
-            desiredPosition = hit.point - direction * 0.1f;
-        }
-
-        targetPosition = desiredPosition;
-
-        //targetPosition = position + (velocity * averageInterval); //было в уроке
+        targetPosition = desiredPosition;        
         _velocityMagnitude = velocity.magnitude;
 
         this.velocity = velocity;
@@ -118,7 +113,7 @@ public class EnemyCharacter : Character
     }
     public void ApplyDamage(int damage)
     {
-        _health.ApplyDamage(damage);       
+        _health.ApplyDamage(damage);
 
         Dictionary<string, object> data = new Dictionary<string, object>()
         {

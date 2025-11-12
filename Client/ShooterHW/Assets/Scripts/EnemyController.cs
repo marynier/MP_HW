@@ -34,6 +34,7 @@ public class EnemyController : MonoBehaviour
         _character.SetSpeed(player.speed);
         _character.SetMaxHP(player.maxHP);
         player.OnChange += OnChange;
+        _armory.SwitchGun((int)player.gun);
     }
 
     public void Shoot(in ShootInfo info)
@@ -63,8 +64,8 @@ public class EnemyController : MonoBehaviour
     internal void OnChange(List<DataChange> changes)
     {
         SaveReceiveTime();
-        Vector3 position = _character.targetPosition;
-        Vector3 velocity = _character.velocity;
+        Vector3 position = new Vector3(_player.pX, _player.pY, _player.pZ);
+        Vector3 velocity = new Vector3(_player.vX, _player.vY, _player.vZ);
 
         foreach (var dataChange in changes)
         {
@@ -76,25 +77,7 @@ public class EnemyController : MonoBehaviour
                 case "currentHP":
                     if ((sbyte)dataChange.Value > (sbyte)dataChange.PreviousValue)
                         _character.RestoreHP((sbyte)dataChange.Value);
-                    break;
-                case "pX":
-                    position.x = (float)dataChange.Value;
-                    break;
-                case "pY":
-                    position.y = (float)dataChange.Value;
-                    break;
-                case "pZ":
-                    position.z = (float)dataChange.Value;
-                    break;
-                case "vX":
-                    velocity.x = (float)dataChange.Value;
-                    break;
-                case "vY":
-                    velocity.y = (float)dataChange.Value;
-                    break;
-                case "vZ":
-                    velocity.z = (float)dataChange.Value;
-                    break;
+                    break;               
                 case "rX":
                     _character.SetRotateX((float)dataChange.Value);
                     break;

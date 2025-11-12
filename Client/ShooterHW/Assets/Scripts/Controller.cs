@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    [SerializeField] private PlayerArmory _armory;
     [SerializeField] private float _restartDelay = 3f;
     [SerializeField] private PlayerCharacter _player;
     [SerializeField] private float _mouseSensitivity = 2f;
@@ -19,6 +20,11 @@ public class Controller : MonoBehaviour
         _multiplayerManager = MultiplayerManager.Instance;
         _hideCursor = true;
         Cursor.lockState = CursorLockMode.Locked;
+        if (_armory.TryChangeGun(1, out var gun))
+        {
+            SendGunChange(1);
+            SetGun(gun);
+        }
     }
 
     void Update()
@@ -65,6 +71,18 @@ public class Controller : MonoBehaviour
         if (space) _player.Jump();
 
         if (isShoot && _gun.TryShoot(out ShootInfo shootInfo)) SendShoot(ref shootInfo);
+
+        for (int i = 0; i < _armory.gunsCount; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+            {
+                if (_armory.TryChangeGun(i, out var gun))
+                {
+                    SendGunChange(i);
+                    SetGun(gun);
+                }
+            }
+        }
 
         SendMove();
     }
@@ -135,6 +153,15 @@ public class Controller : MonoBehaviour
         _hold = true;
         yield return new WaitForSecondsRealtime(_restartDelay);
         _hold = false;
+    }
+
+    private void SendGunChange(int index)
+    {
+        Dictionary<string, object> data = new Dictionary<string, object>()
+        {
+            { "gun", index }
+        };
+        MultiplayerManager.Instance.SendInfo("gunChange", data);
     }
 
     public void SetGun(PlayerGun gun)
