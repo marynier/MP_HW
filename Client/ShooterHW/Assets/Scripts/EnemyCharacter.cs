@@ -80,6 +80,8 @@ public class EnemyCharacter : Character
     {
         Vector3 desiredPosition = position + (velocity * averageInterval);
 
+
+        //проверка стен и пола
         Vector3 origin = transform.position;       
         Vector3 direction = desiredPosition - origin;
         float distance = direction.magnitude;
